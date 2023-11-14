@@ -1,4 +1,4 @@
-# Hoppybara Alpha 0.1
+# Hoppybara Dev 0.1
 
 - `src` - source code
 - `www` - distribution folder, contains your index.html, built js bundle and static assets
