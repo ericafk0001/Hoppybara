@@ -1,8 +1,7 @@
-# Folder structure
+# Hoppybara Alpha 0.1
 
-- `src` - source code for your kaboom project
+- `src` - source code
 - `www` - distribution folder, contains your index.html, built js bundle and static assets
-
 
 ## Development
 
@@ -25,3 +24,5 @@ $ npm run bundle
 ```
 
 will build your game and package into a .zip file, you can upload to your server or itch.io / newground etc.
+
+**Please give credit if you are using my code!**
