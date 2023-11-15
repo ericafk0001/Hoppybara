@@ -7,8 +7,11 @@ let score = 0;
 kaboom();
 // load a sprite "capybara" from an image
 loadSprite("capybara", "sprites/capybara.png");
+loadSprite("Summer4", "backgrounds/Summer4.png");
 
 scene("game", () => {
+  add([sprite("Summer4"), fixed(), scale()]);
+
   const capybara = add([
     // list of components
     sprite("capybara"),
