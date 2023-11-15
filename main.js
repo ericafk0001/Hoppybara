@@ -52,7 +52,9 @@ scene("game", () => {
       anchor("botleft"),
       color(200, 0, 0),
       move(LEFT, SPEED),
-      "tree", // add a tag here
+      "tree", // tag
+      offscreen({ destroy: true }),
+      "tree",
     ]);
     wait(rand(0.8, 2), () => {
       spawnTree();
