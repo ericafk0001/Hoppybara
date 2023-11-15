@@ -24,6 +24,12 @@ scene("game", () => {
     }
   });
 
+  onKeyPress("w", () => {
+    if (capybara.isGrounded()) {
+      capybara.jump();
+    }
+  });
+
   // add platform
   add([
     rect(width() + 6, 48),
