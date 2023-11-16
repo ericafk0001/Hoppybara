@@ -1,6 +1,7 @@
 // import kaboom lib cdn
 import kaboom from "https://unpkg.com/kaboom@3000.0.1/dist/kaboom.mjs";
 
+let paused = false;
 const SPEED = 500;
 const JUMP_FORCE = 1300;
 const GRAVITY = 4000;
@@ -10,6 +11,13 @@ kaboom();
 // load sprites
 loadSprite("capybara", "sprites/capybara-v2-0.png");
 loadSprite("background", "backgrounds/Summer4.png");
+loadSound("lifeisfullofjoy", "music/Lifeisfullofjoy.wav");
+
+// play a looping soundtrack
+const music = play("lifeisfullofjoy", {
+  volume: 0.7,
+  loop: true,
+});
 
 scene("game", () => {
   add([sprite("background", { width: width(), height: height() })]);
@@ -74,6 +82,7 @@ scene("game", () => {
   capybara.onCollide("tree", () => {
     addKaboom(capybara.pos);
     shake();
+    burp();
     go("lose");
   });
 
