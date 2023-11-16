@@ -2,23 +2,24 @@
 import kaboom from "https://unpkg.com/kaboom@3000.0.1/dist/kaboom.mjs";
 
 const SPEED = 500;
+const JUMP_FORCE = 1300;
+const GRAVITY = 4000;
 let score = 0;
 //initialize kaboom
 kaboom();
-// load a sprite "capybara" from an image
-loadSprite("capybara", "sprites/capybara.png");
-loadSprite("Summer4", "backgrounds/Summer4.png");
+// load sprites
+loadSprite("capybara", "sprites/capybara-v2-0.png");
+loadSprite("background", "backgrounds/Summer4.png");
 
 scene("game", () => {
-  add([sprite("Summer4"), fixed(), scale()]);
-
+  add([sprite("background", { width: width(), height: height() })]);
   const capybara = add([
     // list of components
     sprite("capybara"),
-    pos(80, 40),
+    pos(100, 40),
     area(),
-    body(),
-    scale(3),
+    body({ jumpForce: JUMP_FORCE }),
+    scale(5.1),
   ]);
 
   onKeyPress("space", () => {
@@ -26,13 +27,11 @@ scene("game", () => {
       capybara.jump();
     }
   });
-
   onKeyPress("w", () => {
     if (capybara.isGrounded()) {
       capybara.jump();
     }
   });
-
   onClick(() => {
     if (capybara.isGrounded()) {
       capybara.jump();
@@ -49,7 +48,7 @@ scene("game", () => {
     color(0, 180, 2),
   ]);
 
-  setGravity(1600);
+  setGravity(GRAVITY);
 
   function spawnTree() {
     add([
@@ -113,6 +112,7 @@ scene("lose", () => {
 
   // go back to game with space is pressed
   onKeyPress("space", () => go("game"));
+  onKeyPress("w", () => go("game"));
   onClick(() => go("game"));
 });
 
