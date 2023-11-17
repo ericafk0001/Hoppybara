@@ -1,30 +1,30 @@
-// import kaboom lib cdn
 import kaboom from "https://unpkg.com/kaboom@3000.0.1/dist/kaboom.mjs";
-
-let paused = false;
-const SPEED = 500;
-const JUMP_FORCE = 1300;
+//game variables
+const SPEED = 400;
+const JUMP_FORCE = 1350;
 const GRAVITY = 4000;
 let score = 0;
 //initialize kaboom
 kaboom();
-// load sprites
+// load assets
+loadSound("lifeisfullofjoy", "music/Lifeisfullofjoy.wav");
 loadSprite("capybara", "sprites/capybara-v2-0.png");
 loadSprite("background", "backgrounds/Summer4.png");
-loadSound("lifeisfullofjoy", "music/Lifeisfullofjoy.wav");
 
-// play a looping soundtrack
 const music = play("lifeisfullofjoy", {
   volume: 0.7,
   loop: true,
 });
 
+// Game
 scene("game", () => {
-  add([sprite("background", { width: width(), height: height() })]);
-  const capybara = add([
-    // list of components
+  let curTween = null;
+  const game = add([timer()]);
+  game.add([sprite("background", { width: width(), height: height() })]);
+  //add a capybara
+  const capybara = game.add([
     sprite("capybara"),
-    pos(100, 40),
+    pos(300, 40),
     area(),
     body({ jumpForce: JUMP_FORCE }),
     scale(5.1),
@@ -47,7 +47,7 @@ scene("game", () => {
   });
 
   // add platform
-  add([
+  game.add([
     rect(width() + 6, 48),
     pos(0, height() - 48),
     outline(4),
@@ -55,13 +55,13 @@ scene("game", () => {
     body({ isStatic: true }),
     color(0, 180, 2),
   ]);
-
+  //gravity
   setGravity(GRAVITY);
-
+  //obstacles
   function spawnTree() {
-    add([
+    game.add([
       // the tree components
-      rect(48, rand(24, 64)),
+      rect(48, rand(26, 64)),
       area(),
       outline(4),
       pos(width(), height() - 48),
@@ -72,28 +72,58 @@ scene("game", () => {
       offscreen({ destroy: true }),
       "tree",
     ]);
-    wait(rand(0.8, 2), () => {
+    wait(rand(1, 2.5), () => {
       spawnTree();
     });
   }
 
   spawnTree();
-
+  //death
   capybara.onCollide("tree", () => {
     addKaboom(capybara.pos);
     shake();
     burp();
     go("lose");
   });
-
-  const scoreLabel = add([text(score), pos(24, 24), color(0, 0, 0)]);
-
-  loop(0.08, () => {
+  //score
+  const scoreLabel = game.add([text(score), pos(24, 24), color(0, 0, 0)]);
+  game.loop(0.08, () => {
     score++;
     scoreLabel.text = score;
   });
-});
+  //pause menu
+  onKeyPress("p", () => {
+    game.paused = !game.paused;
+    if (curTween) curTween.cancel();
+    curTween = tween(
+      pauseMenu.pos,
+      game.paused ? center() : center().add(0, 700),
+      1,
+      (p) => (pauseMenu.pos = p),
+      easings.easeOutElastic
+    );
+    if (game.paused) {
+      pauseMenu.hidden = false;
+      pauseMenu.paused = false;
+    } else {
+      curTween.onEnd(() => {
+        pauseMenu.hidden = true;
+        pauseMenu.paused = true;
+      });
+    }
+  });
 
+  const pauseMenu = add([
+    text(`Press "P" to resume game.`),
+    color(0, 0, 0),
+    anchor("center"),
+    pos(center().add(0, 700)),
+  ]);
+
+  pauseMenu.hidden = true;
+  pauseMenu.paused = true;
+});
+//losers
 scene("lose", () => {
   add([
     text("Game Over!"),
@@ -119,7 +149,7 @@ scene("lose", () => {
 
   score = 0;
 
-  // go back to game with space is pressed
+  //retry keys
   onKeyPress("space", () => go("game"));
   onKeyPress("w", () => go("game"));
   onClick(() => go("game"));

@@ -1,11 +1,11 @@
-# Hoppybara Dev 0.4.1
+# Hoppybara 0.4.2
 
 "Chrome Dino x Capybara" themed Platformer game
 
 Built using Kaboom.js
 Using Kaboom's CDN
 
-*Play Demo here:*
+_Play Demo here:_
 https://hoppybara.netlify.app
 
 **Please give credit if you are using my code!**
