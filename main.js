@@ -5,7 +5,9 @@ const JUMP_FORCE = 1350;
 const GRAVITY = 4000;
 let score = 0;
 //initialize kaboom
-kaboom();
+kaboom({
+  maxFPS: 61,
+});
 // load assets
 loadSound("lifeisfullofjoy", "music/Lifeisfullofjoy.wav");
 loadSprite("capybara", "sprites/capybara-v2-0.png");
@@ -24,7 +26,7 @@ scene("game", () => {
   //add a capybara
   const capybara = game.add([
     sprite("capybara"),
-    pos(300, 40),
+    pos(300, 786),
     area(),
     body({ jumpForce: JUMP_FORCE }),
     scale(5.1),
