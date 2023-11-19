@@ -1,4 +1,4 @@
-# Hoppybara 0.4.2
+# Hoppybara 0.4.3
 
 "Chrome Dino x Capybara" themed Platformer game
 

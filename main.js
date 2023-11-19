@@ -6,7 +6,7 @@ const GRAVITY = 4000;
 let score = 0;
 //initialize kaboom
 kaboom({
-  maxFPS: 60,
+  maxFPS: 61,
 });
 // load assets
 loadSound("lifeisfullofjoy", "music/Lifeisfullofjoy.wav");
@@ -112,7 +112,7 @@ scene("game", () => {
     score++;
     scoreLabel.text = score;
   });
-  // pause menu
+  //pause menu
   onKeyPress("p", () => {
     pause(game, curTween, pauseMenu);
   });
