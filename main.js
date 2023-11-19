@@ -12,10 +12,13 @@ kaboom({
 loadSound("lifeisfullofjoy", "music/Lifeisfullofjoy.wav");
 loadSprite("capybara", "sprites/capybara-v2-0.png");
 loadSprite("background", "backgrounds/Summer4.png");
+loadSprite("muted", "sprites/icons8-mute-48.png");
+loadSprite("unmuted", "sprites/icons8-mute-48.png");
 
 const music = play("lifeisfullofjoy", {
   volume: 0.7,
   loop: true,
+  paused: true,
 });
 
 // Game
@@ -26,7 +29,7 @@ scene("game", () => {
   //add a capybara
   const capybara = game.add([
     sprite("capybara"),
-    pos(300, 786),
+    pos(300, height() / 1.7),
     area(),
     body({ jumpForce: JUMP_FORCE }),
     scale(5.1),
@@ -45,6 +48,22 @@ scene("game", () => {
   onClick(() => {
     if (capybara.isGrounded()) {
       capybara.jump();
+    }
+  });
+
+  //mute button
+  game.add([
+    sprite("muted"),
+    pos(width() - 50, 24),
+    area(),
+    body({ isStatic: true }),
+    "mute",
+  ]);
+  onClick("mute", () => {
+    if (music.paused == true) {
+      music.paused = false;
+    } else {
+      music.paused = true;
     }
   });
 
@@ -95,24 +114,7 @@ scene("game", () => {
   });
   //pause menu
   onKeyPress("p", () => {
-    game.paused = !game.paused;
-    if (curTween) curTween.cancel();
-    curTween = tween(
-      pauseMenu.pos,
-      game.paused ? center() : center().add(0, 700),
-      1,
-      (p) => (pauseMenu.pos = p),
-      easings.easeOutElastic
-    );
-    if (game.paused) {
-      pauseMenu.hidden = false;
-      pauseMenu.paused = false;
-    } else {
-      curTween.onEnd(() => {
-        pauseMenu.hidden = true;
-        pauseMenu.paused = true;
-      });
-    }
+    pause(game, curTween, pauseMenu);
   });
 
   const pauseMenu = add([
@@ -124,6 +126,15 @@ scene("game", () => {
 
   pauseMenu.hidden = true;
   pauseMenu.paused = true;
+
+  //Used to figure out if the game is focused
+  
+  onVisibilityChange(function (visible) {
+    console.log("the page is now", visible ? "focused" : "unfocused");
+    if (!visible && !game.paused) {
+      pause(game, curTween, pauseMenu);
+    }
+  });
 });
 //losers
 scene("lose", () => {
@@ -158,3 +169,76 @@ scene("lose", () => {
 });
 
 go("game");
+//function for pausing
+function pause(game, curTween, pauseMenu) {
+  game.paused = !game.paused;
+  if (curTween) curTween.cancel();
+  curTween = tween(
+    pauseMenu.pos,
+    game.paused ? center() : center().add(0, 700),
+    1,
+    (p) => (pauseMenu.pos = p),
+    easings.easeOutElastic
+  );
+  if (game.paused) {
+    pauseMenu.hidden = false;
+    pauseMenu.paused = false;
+  } else {
+    curTween.onEnd(() => {
+      pauseMenu.hidden = true;
+      pauseMenu.paused = true;
+    });
+  }
+}
+
+//not stolen of stackoverflow
+function onVisibilityChange(callback) {
+  var hidden = "hidden";
+  var visible = true;
+
+  if (!callback) {
+      throw new Error('no callback given');
+  }
+
+  function focused() {
+      if (!visible) {
+          callback(visible = true);
+      }
+  }
+
+  function unfocused() {
+      if (visible) {
+          callback(visible = false);
+      }
+  }
+
+  // Standards:
+  if (hidden in document) {
+      visible = !document.hidden;
+      document.addEventListener('visibilitychange',
+          function() {(document.hidden ? unfocused : focused)()});
+  }
+  if ((hidden = "mozHidden") in document) {
+      visible = !document.mozHidden;
+      document.addEventListener('mozvisibilitychange',
+          function() {(document.mozHidden ? unfocused : focused)()});
+  }
+  if ((hidden = "webkitHidden") in document) {
+      visible = !document.webkitHidden;
+      document.addEventListener('webkitvisibilitychange',
+          function() {(document.webkitHidden ? unfocused : focused)()});
+  }
+  if ((hidden = "msHidden") in document) {
+      visible = !document.msHidden;
+      document.addEventListener('msvisibilitychange',
+          function() {(document.msHidden ? unfocused : focused)()});
+  }
+  // IE 9 and lower:
+  if ('onfocusin' in document) {
+      document.onfocusin = focused;
+      document.onfocusout = unfocused;
+  }
+  // All others:
+  window.onpageshow = window.onfocus = focused;
+  window.onpagehide = window.onblur = unfocused;
+};
